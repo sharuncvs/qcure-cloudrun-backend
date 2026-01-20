@@ -8,6 +8,7 @@ app.use(express.json());
 
 // This path matches your future Load Balancer rule: /api/*
 app.get('/api/test', (req, res) => {
+  console.log('Test API called');
   res.json({
     status: "success",
     message: "QueueCare Test Backend is working",
