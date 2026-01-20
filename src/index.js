@@ -8,7 +8,6 @@ app.use(express.json());
 
 // This path matches your future Load Balancer rule: /api/*
 app.get('/api/test', (req, res) => {
-  console.log('Test API called');
   res.json({
     status: "success",
     message: "QueueCare Test Backend is working",
@@ -17,8 +16,19 @@ app.get('/api/test', (req, res) => {
   });
 });
 
+// This path matches your future Load Balancer rule: /api/*
+app.get('/health', (req, res) => {
+  res.json({
+    status: "success",
+    message: "Backend is running",
+    location: "kochi-india",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Root path for simple health checks
 app.get('/', (req, res) => {
+  console.log('Root API called');
   res.send("Backend is running. Use /api/test for JSON.");
 });
 
