@@ -1,0 +1,34 @@
+substitutions:
+  _SERVICE_NAME: qcure-users
+  _IMAGE_NAME: qcure-users
+  _REGION: asia-south1
+
+steps:
+  # 1. Build Docker image
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/qcure/${_IMAGE_NAME}:$SHORT_SHA
+      - .
+
+  # 2. Push image to Artifact Registry
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/qcure/${_IMAGE_NAME}:$SHORT_SHA
+
+  # 3. Deploy to Cloud Run
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE_NAME}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/qcure/${_IMAGE_NAME}:$SHORT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/qcure/${_IMAGE_NAME}:$SHORT_SHA
